@@ -100,7 +100,7 @@ const LogoObject = () => {
   const texture = useLoader(TextureLoader, 'logo_jetskipsd.png');
 
   return (
-    <mesh position={[0, 0.5, 0]}>
+    <mesh position={[0, 0.3, -3.4]}>
       <planeBufferGeometry attach="geometry" args={[1.1, 1]} />
       <meshBasicMaterial attach="material" map={texture} transparent />
     </mesh>
@@ -115,17 +115,25 @@ const LogoObject = () => {
 const Landscape = () => {
   const terrain1Ref = React.useRef();
   const terrain2Ref = React.useRef();
+  const terrain3Ref = React.useRef();
+  // const terrain4Ref = React.useRef();
 
   useFrame((state) => {
     // Update plane position
-    terrain1Ref.current.position.z = (state.clock.elapsedTime * 0.15) % 2;
-    terrain2Ref.current.position.z = ((state.clock.elapsedTime * 0.15) % 2) - 2;
+    terrain1Ref.current.position.z = (state.clock.elapsedTime * 0) % 2;
+    terrain2Ref.current.position.z = ((state.clock.elapsedTime * 0) % 2) - 2;
+    terrain3Ref.current.position.z = ((state.clock.elapsedTime * 0) % 2) + 2;
+    // terrain4Ref.current.position.z = ((state.clock.elapsedTime * 0) % 2) - 6;
+    
   });
 
   return (
     <>
       <Terrain ref={terrain1Ref} z={0} />
       <Terrain ref={terrain2Ref} z={-2} />
+      <Terrain ref={terrain3Ref} z={2} />
+      {/* <Terrain ref={terrain4Ref} z={-6} /> */}
+
     </>
   );
 };
@@ -181,16 +189,16 @@ const Light = () => {
   const spotlight1Ref = React.useRef();
   const spotlight2Ref = React.useRef();
 
-  spotlight1Ref.current?.target.position.set([-0.25, 0.25, 0.25]);
-  spotlight2Ref.current?.target.position.set([0.25, 0.25, 0.25]);
+  // spotlight1Ref.current?.target.position.set([-0.25, 0.25, 0.25]);
+  // spotlight2Ref.current?.target.position.set([0.25, 0.25, 0.25]);
 
   return (
     <>
       <spotLight
         ref={spotlight1Ref}
-        color="#d53c3d"
-        intensity={10}
-        position={[0.5, 0.75, 2.1]}
+        color="#ffffff"
+        intensity={40}
+        position={[0, 0.75, 4.1]}
         distance={25}
         angle={Math.PI * 0.1}
         penumbra={0.25}
@@ -198,9 +206,9 @@ const Light = () => {
       />
       <spotLight
         ref={spotlight2Ref}
-        color="#d53c3d"
-        intensity={10}
-        position={[-0.5, 0.75, 2.1]}
+        color="#ffffff"
+        intensity={40}
+        position={[0, 0.75, 4.1]}
         distance={25}
         angle={Math.PI * 0.1}
         penumbra={0.25}
@@ -272,8 +280,8 @@ const Scene = (props) => {
             {/* <OrbitControls attach="orbitControls" /> */}
             <PerspectiveCamera
               makeDefault
-              position={[0, 0.11, 1.1]}
-              fov={90}
+              position={[0, 0.1, -2.4]}
+              fov={75}
               near={0.01}
               far={20}
             />
@@ -309,11 +317,13 @@ export default function Home() {
             setScroll(e.currentTarget.scrollTop);
           }}
         >
-            <p className="text">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, distinctio. Cum ex tenetur expedita atque porro voluptas iure consequuntur odio repellat aperiam similique earum iste possimus molestiae neque, placeat maxime.
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita harum temporibus voluptate eos optio minima cupiditate quaerat nulla! Dolores consectetur repudiandae aut exercitationem illum repellat blanditiis, laudantium optio laboriosam molestias.
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet magnam labore quod qui laudantium est sunt, alias saepe. Qui quos suscipit aperiam cumque nemo ipsam laborum vel rerum est id.
-            </p>
+          <div className="backdrop">
+          </div>
+          <p className="text">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, distinctio. Cum ex tenetur expedita atque porro voluptas iure consequuntur odio repellat aperiam similique earum iste possimus molestiae neque, placeat maxime.
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita harum temporibus voluptate eos optio minima cupiditate quaerat nulla! Dolores consectetur repudiandae aut exercitationem illum repellat blanditiis, laudantium optio laboriosam molestias.
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet magnam labore quod qui laudantium est sunt, alias saepe. Qui quos suscipit aperiam cumque nemo ipsam laborum vel rerum est id.
+          </p>
         </div>
         <Scene scroll={scroll}/>
       </main>
