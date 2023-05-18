@@ -1,11 +1,11 @@
-import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, extend, useLoader } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   OrbitControls,
   useTexture,
 } from "@react-three/drei";
 import Head from "next/head";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   EffectComposer,
   GammaCorrectionShader,
@@ -16,6 +16,7 @@ import {
 } from "three-stdlib";
 import { MeshStandardMaterial } from "three";
 import CustomShaderMaterial from "three-custom-shader-material";
+import { TextureLoader } from 'three/src/loaders/TextureLoader'
 
 const fragmentShader = `
 float aastep(in float threshold, in float value) {
@@ -83,6 +84,28 @@ const Terrain = React.forwardRef((props, ref) => {
 });
 
 Terrain.displayName = "Terrain";
+
+// const Cube = () => {
+//   const texture = useLoader(TextureLoader, 'logo_jetskipsd.png');
+
+//   return (
+//     <mesh position={[0, 0.2, -3]}>
+//       <boxBufferGeometry attach="geometry" args={[0.3, 0.3, 0.3]} />
+//       <meshStandardMaterial attach="material" map={texture} />
+//     </mesh>
+//   );
+// };
+
+const LogoObject = () => {
+  const texture = useLoader(TextureLoader, 'logo_jetskipsd.png');
+
+  return (
+    <mesh position={[0, 0.5, 0]}>
+      <planeBufferGeometry attach="geometry" args={[1.1, 1]} />
+      <meshBasicMaterial attach="material" map={texture} transparent />
+    </mesh>
+  );
+};
 
 /**
  * This component renders the landscape:
@@ -166,7 +189,7 @@ const Light = () => {
       <spotLight
         ref={spotlight1Ref}
         color="#d53c3d"
-        intensity={40}
+        intensity={10}
         position={[0.5, 0.75, 2.1]}
         distance={25}
         angle={Math.PI * 0.1}
@@ -176,7 +199,7 @@ const Light = () => {
       <spotLight
         ref={spotlight2Ref}
         color="#d53c3d"
-        intensity={40}
+        intensity={10}
         position={[-0.5, 0.75, 2.1]}
         distance={25}
         angle={Math.PI * 0.1}
@@ -186,6 +209,21 @@ const Light = () => {
     </>
   );
 };
+
+
+const Foo = (props) => {
+  const { camera } = useThree();
+  const { scroll } = props;
+  
+  useEffect(() => {
+  camera.position.set(0, 0.1, (-2.4+(scroll * 0.003)));
+  }, [scroll]);
+
+  return ( 
+    <>
+    </>
+  );
+}
 
 /**
  * This component renders the scene which renders all the components declared above and more:
@@ -204,8 +242,9 @@ const Light = () => {
  * device pixel ratio immediately when the scene appears the first time.
  *
  */
-const Scene = () => {
+const Scene = (props) => {
   const [mounted, setMounted] = React.useState(false);
+  const { scroll } = props;
 
   React.useEffect(() => {
     setMounted(true);
@@ -220,7 +259,7 @@ const Scene = () => {
             display: "block",
             top: 0,
             left: 0,
-            zIndex: -1,
+            zIndex: -100,
             outline: "none",
           }}
           dpr={Math.min(window.devicePixelRatio, 2)}
@@ -230,17 +269,20 @@ const Scene = () => {
           <React.Suspense fallback={null}>
             <color attach="background" args={["#000000"]} />
             <fog attach="fog" args={["#000000", 1, 2.5]} />
-            <OrbitControls attach="orbitControls" />
+            {/* <OrbitControls attach="orbitControls" /> */}
             <PerspectiveCamera
               makeDefault
-              position={[0, 0.06, 1.1]}
-              fov={75}
+              position={[0, 0.11, 1.1]}
+              fov={90}
               near={0.01}
               far={20}
             />
             <Light />
             <Landscape />
             <Effects />
+            <Foo scroll={scroll}/>
+            {/* <Cube /> */}
+            <LogoObject />
           </React.Suspense>
         </Canvas>
       )}
@@ -249,6 +291,8 @@ const Scene = () => {
 };
 
 export default function Home() {
+  const [scroll, setScroll] = React.useState(0);
+
   return (
     <div>
       <Head>
@@ -260,27 +304,18 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className="label-container">
-          <p className="label">
-            ⚡️ Originally inspired by the{" "}
-            <a href="https://linear.app/releases/2021-06">
-              2021 Linear release page
-            </a>
-          </p>
-          <p className="label">
-            ✨ Reverse-engineered and recreated by{" "}
-            <a href="https://twitter.com/MaximeHeckel">@MaximeHeckel</a> with
-            React-Three-Fiber
-          </p>
-          <p className="label">
-            👉 How I built this?{" "}
-            <a href="https://blog.maximeheckel.com/posts/vaporwave-3d-scene-with-threejs/">
-              Building a Vaporwave scene with Three.js
-            </a>{" "}
-            (Three.js only)
-          </p>
+        <div className="label-container"
+          onScroll={(e) => {
+            setScroll(e.currentTarget.scrollTop);
+          }}
+        >
+            <p className="text">
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, distinctio. Cum ex tenetur expedita atque porro voluptas iure consequuntur odio repellat aperiam similique earum iste possimus molestiae neque, placeat maxime.
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita harum temporibus voluptate eos optio minima cupiditate quaerat nulla! Dolores consectetur repudiandae aut exercitationem illum repellat blanditiis, laudantium optio laboriosam molestias.
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet magnam labore quod qui laudantium est sunt, alias saepe. Qui quos suscipit aperiam cumque nemo ipsam laborum vel rerum est id.
+            </p>
         </div>
-        <Scene />
+        <Scene scroll={scroll}/>
       </main>
     </div>
   );
